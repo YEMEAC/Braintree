@@ -9,3 +9,5 @@ config.url.properties
 *.exe
 *.o
 *.so
+*build
+.gradle
