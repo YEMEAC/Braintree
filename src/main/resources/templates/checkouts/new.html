@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Braintree Checkout</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/app.css" th:href="@{/css/app.css}"/>
+    <link rel="icon" type="image/png" href="/images/favicon.png" th:href="@{/images/favicon.png}"/>
+    <script src="/javascript/vendor/jquery-2.1.4.min.js" th:src="@{/javascript/vendor/jquery-2.1.4.min.js}"></script>
+    <script src="/javascript/vendor/jquery.lettering-0.6.1.min.js"
+            th:src="@{/javascript/vendor/jquery.lettering-0.6.1.min.js}"></script>
+    <script src="/javascript/demo.js" th:src="@{/javascript/demo.js}"></script>
+</head>
+<body>
+<header class="main">
+    <div class="container wide">
+        <div class="content slim">
+            <div class="set">
+                <div class="fill">
+                    <a class="pseudoshop" href="/">PSEUDO<strong>SHOP</strong></a>
+                </div>
+
+                <div class="fit">
+                    <a class="braintree" href="https://developers.braintreepayments.com/guides/drop-in" target="_blank">Braintree</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="notice-wrapper">
+        <div class="show notice error notice-error" th:if="${errorDetails}">
+            <span class="notice-message" th:text="${errorDetails}"></span>
+        </div>
+    </div>
+</header>
+
+<div class="wrapper">
+    <div class="checkout container">
+
+        <header>
+            <h1>Hola, <br/>Let's test a Payment Method</h1>
+            <p>
+                Make a test payment with Braintree using PayPal or a card
+            </p>
+        </header>
+
+        <!-- <form id="payment-form" method="post">  -->
+        <form id="create-payment-method-form" method="post" action="/createCreditCardPaymentMethod">
+            <section>
+                <div class="bt-drop-in-wrapper">
+                    <div id="bt-dropin"></div>
+                </div>
+
+                <label for="default">
+                    <span class="input-label">Default</span>
+                    <div class="input-wrapper">
+                        <input id="default" name="default" type="checkbox" placeholder="Default" checked="false"/>
+                    </div>
+                </label>
+                <label for="deviceData">
+                    <span class="input-label">Device Data</span>
+                    <div class="input-wrapper">
+                        <input id="deviceData" name="deviceData" type="text" placeholder="Device Data" value="deviceData"/>
+                    </div>
+                </label>
+                <label for="userId">
+                    <span class="input-label">User Id</span>
+                    <div class="input-wrapper">
+                        <input id="userId" name="userId" type="number" placeholder="User Id" value="123"/>
+                    </div>
+                </label>
+                <label for="email">
+                    <span class="input-label">email</span>
+                    <div class="input-wrapper">
+                        <input id="email" name="email" type="text" placeholder="Email" value="payment-testing@cabonline.com"/>
+                    </div>
+                </label>
+                <label for="firstName">
+                    <span class="input-label">firstName</span>
+                    <div class="input-wrapper">
+                        <input id="firstName" name="firstName" type="text" placeholder="First Name" value="Jane"/>
+                    </div>
+                </label>
+                <label for="lastName">
+                    <span class="input-label">lastName</span>
+                    <div class="input-wrapper">
+                        <input id="lastName" name="lastName" type="text" placeholder="Last Name" value="Doe"/>
+                    </div>
+                </label>
+                <label for="label">
+                    <span class="input-label">Label</span>
+                    <div class="input-wrapper">
+                        <input id="label" name="label" type="text" placeholder="Label" value="Braintree Visa"/>
+                    </div>
+                </label>
+                <label for="paymentProvider">
+                    <span class="input-label">Payment Provider</span>
+                    <div class="input-wrapper">
+                        <input id="paymentProvider" name="paymentProvider" type="text" placeholder="Payment Provider" value="Braintree"/>
+                    </div>
+                </label>
+
+            </section>
+
+            <button class="button" type="submit"><span>Create Payment Method</span></button>
+        </form>
+    </div>
+</div>
+
+<script src="https://js.braintreegateway.com/js/braintree-2.17.6.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var checkout = new Demo({
+        formID: 'create-payment-method-form'
+    })
+
+    var client_token = [[${clientToken}]];
+
+    braintree.setup(client_token, "dropin", {
+        container: "bt-dropin",
+        dataCollector: {
+            kount: {environment: 'sandbox'}
+        },
+        onReady: function (braintreeInstance) {
+            var field = document.getElementById('deviceData');
+            field.value = braintreeInstance.deviceData;
+        }
+    });
+
+    /*]]>*/
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Braintree Checkout</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/app.css" th:href="@{/css/app.css}"/>
+    <link rel="icon" type="image/png" href="/images/favicon.png" th:href="@{/images/favicon.png}"/>
+    <script src="/javascript/vendor/jquery-2.1.4.min.js" th:src="@{/javascript/vendor/jquery-2.1.4.min.js}"></script>
+    <script src="/javascript/vendor/jquery.lettering-0.6.1.min.js"
+            th:src="@{/javascript/vendor/jquery.lettering-0.6.1.min.js}"></script>
+    <script src="/javascript/demo.js" th:src="@{/javascript/demo.js}"></script>
+</head>
+<body>
+<header class="main">
+    <div class="container wide">
+        <div class="content slim">
+            <div class="set">
+                <div class="fill">
+                    <a class="pseudoshop" href="/">PSEUDO<strong>SHOP</strong></a>
+                </div>
+
+                <div class="fit">
+                    <a class="braintree" href="https://developers.braintreepayments.com/guides/drop-in" target="_blank">Braintree</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="notice-wrapper">
+        <div class="show notice error notice-error" th:if="${errorDetails}">
+            <span class="notice-message" th:text="${errorDetails}"></span>
+        </div>
+    </div>
+</header>
+
+<div class="wrapper">
+    <div class="checkout container">
+
+        <header>
+            <h1>Hola, <br/>Let's settle a Payment</h1>
+            <p>
+                Make a test payment with Braintree using PayPal or a card
+            </p>
+        </header>
+        <form id="settle-payment-form" method="post" action="/settleCreditCardPayment">
+            <section>
+                <label for="amount">
+                    <span class="input-label">Amount</span>
+                    <div class="input-wrapper amount-wrapper">
+                        <input id="amount" name="amount" type="tel" min="10" placeholder="Amount" th:value="${#httpServletRequest.getParameter('amount')}"/>
+                    </div>
+                </label>
+                <label for="paymentId">
+                    <span class="input-label">Payment Id</span>
+                    <div class="input-wrapper">
+                        <input id="paymentId" name="paymentId" min="10" placeholder="Payment Id" th:value="${#httpServletRequest.getParameter('paymentId')}"/>
+                    </div>
+                </label>
+            </section>
+            <button class="button" type="submit"><span>Settle Payment</span></button>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var checkout = new Demo({
+        formID: 'settle-payment-form'
+    })
+    /*]]>*/
+</script>
+</body>
+</html>

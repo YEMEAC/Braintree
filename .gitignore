@@ -1,0 +1,11 @@
+config.properties
+config.url.properties
+*test
+*.idea
+*.jar
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so

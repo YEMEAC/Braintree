@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Braintree Transaction</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/app.css" th:href="@{/css/app.css}"/>
+    <link rel="icon" type="image/png" href="/images/favicon.png" th:href="@{/images/favicon.png}"/>
+    <script src="/javascript/vendor/jquery-2.1.4.min.js" th:src="@{/javascript/vendor/jquery-2.1.4.min.js}"></script>
+    <script src="/javascript/vendor/jquery.lettering-0.6.1.min.js"
+            th:src="@{/javascript/vendor/jquery.lettering-0.6.1.min.js}"></script>
+    <script src="/javascript/demo.js" th:src="@{/javascript/demo.js}"></script>
+</head>
+<body>
+<header class="main">
+    <div class="container wide">
+        <div class="content slim">
+            <div class="set">
+                <div class="fill">
+                    <a class="pseudoshop" href="/">PSEUDO<strong>SHOP</strong></a>
+                </div>
+
+                <div class="fit">
+                    <a class="braintree" href="https://developers.braintreepayments.com/guides/drop-in" target="_blank">Braintree</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="wrapper">
+    <div class="response container">
+        <div class="content">
+            <div class="icon">
+                <img th:if="${isSuccess}" src="/images/success.svg" th:src="@{/images/success.svg}" alt=""/>
+                <img th:unless="${isSuccess}" src="/images/fail.svg" th:src="@{/images/fail.svg}" alt=""/>
+            </div>
+
+            <div th:if="${isSuccess}">
+                <h1>Sweet Success!</h1>
+                <section>Your test transaction has been successfully processed. See the Braintree API response and try
+                    again.
+                </section>
+            </div>
+            <div th:unless="${isSuccess}">
+                <h1>Transaction Failed</h1>
+                <section>Something went wrong. See the Braintree API response and try again.</section>
+            </div>
+
+            <section>
+                <a class="button primary back" href="/new">
+                    <span>Create Another PaymentMethod</span>
+                </a>
+            </section>
+            <sectionn th:if="${paymentmethod}">
+                <a class="button primary back"
+                   th:href="@{/reserve(userId=${paymentmethod.get('userId')},paymentMethodId=${paymentmethod.get('paymentMethodId')})}">
+                    <span>Create A Reservation</span>
+                </a>
+            </sectionn>
+            <sectionn th:if="${paymentId != null and amount != null}">
+                <a class="button primary back"
+                   th:href="@{/settle(paymentId=${paymentId},amount=${amount})}">
+                    <span>Settle A Reservation</span>
+                </a>
+            </sectionn>
+            <sectionn th:if="${paymentId != null and amount != null}">
+                <a class="button primary back"
+                   th:href="@{/void(paymentId=${paymentId})}">
+                    <span>Void A Reservation</span>
+                </a>
+            </sectionn>
+        </div>
+    </div>
+</div>
+
+<aside class="drawer dark">
+    <header>
+        <div class="content compact">
+            <a href="https://developers.braintreepayments.com" class="braintree" target="_blank">Braintree</a>
+            <h3>API Response</h3>
+        </div>
+    </header>
+
+    <article class="content compact">
+
+        <section th:if="${paymentSettledId}">
+            <h5>Payment Settled</h5>
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>Payment Settled Id</td>
+                    <td th:text="${paymentSettledId}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section th:if="${paymentVoidedId}">
+            <h5>Payment Voided</h5>
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>Payment Voided Id</td>
+                    <td th:text="${paymentVoidedId}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section th:if="${paymentId != null and amount != null}">
+            <h5>Payment Reservation</h5>
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>Payment Reservation Id</td>
+                    <td th:text="${paymentId}"></td>
+                </tr>
+                <tr>
+                    <td>Payment Reservation Amount</td>
+                    <td th:text="${amount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section th:if="${paymentmethod}">
+            <h5>Payment Method Created</h5>
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>userId</td>
+                    <td th:text="${paymentmethod.get('userId')}"></td>
+                </tr>
+                <tr>
+                    <td>paymentMethodId</td>
+                    <td th:text="${paymentmethod.get('paymentMethodId')}"></td>
+                </tr>
+                <tr>
+                    <td>creditCardType</td>
+                    <td th:text="${paymentmethod.get('creditCardType')}"></td>
+                </tr>
+                <tr>
+                    <td>uniqueCardIdentifier</td>
+                    <td th:text="${paymentmethod.get('uniqueCardIdentifier')}"></td>
+                </tr>
+                <tr>
+                    <td>firstSix</td>
+                    <td th:text="${paymentmethod.get('firstSix')}"></td>
+                </tr>
+                <tr>
+                    <td>lastFour</td>
+                    <td th:text="${paymentmethod.get('lastFour')}"></td>
+                </tr>
+                <tr>
+                    <td>brand</td>
+                    <td th:text="${paymentmethod.get('brand')}"></td>
+                </tr>
+                <tr>
+                    <td>expirationMonth</td>
+                    <td th:text="${paymentmethod.get('expirationMonth')}"></td>
+                </tr>
+                <tr>
+                    <td>expirationYear</td>
+                    <td th:text="${paymentmethod.get('expirationYear')}"></td>
+                </tr>
+                <tr>
+                    <td>paymentMethodStatus</td>
+                    <td th:text="${paymentmethod.get('paymentMethodStatus')}"></td>
+                </tr>
+                <tr>
+                    <td>createPaymentMethodResult</td>
+                    <td th:text="${paymentmethod.get('createPaymentMethodResult')}"></td>
+                </tr>
+                <tr>
+                    <td>attributes</td>
+                    <td th:text="${paymentmethod.get('attributes')}"></td>
+                </tr>
+                <tr>
+                    <td>label</td>
+                    <td th:text="${paymentmethod.get('label')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+        <section th:if="${transaction}">
+            <h5>Transaction</h5>
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>id</td>
+                    <td th:text="${transaction.getId()}"></td>
+                </tr>
+                <tr>
+                    <td>type</td>
+                    <td th:text="${transaction.getType()}"></td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td th:text="${transaction.getAmount()}"></td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td th:text="${transaction.getStatus()}"></td>
+                </tr>
+                <tr>
+                    <td>created_at</td>
+                    <td th:text="${new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss Z').format(transaction.getCreatedAt().getTime())}"></td>
+                </tr>
+                <tr>
+                    <td>updated_at</td>
+                    <td th:text="${new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss Z').format(transaction.getUpdatedAt().getTime())}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section th:if="${creditCard}">
+            <h5>Payment</h5>
+
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>token</td>
+                    <td th:text="${creditCard.getToken()}"></td>
+                </tr>
+                <tr>
+                    <td>bin</td>
+                    <td th:text="${creditCard.getBin()}"></td>
+                </tr>
+                <tr>
+                    <td>last_4</td>
+                    <td th:text="${creditCard.getLast4()}"></td>
+                </tr>
+                <tr>
+                    <td>card_type</td>
+                    <td th:text="${creditCard.getCardType()}"></td>
+                </tr>
+                <tr>
+                    <td>expiration_date</td>
+                    <td th:text="${creditCard.getExpirationDate()}"></td>
+                </tr>
+                <tr>
+                    <td>cardholder_name</td>
+                    <td th:text="${creditCard.getCardholderName()}"></td>
+                </tr>
+                <tr>
+                    <td>customer_location</td>
+                    <td th:text="${creditCard.getCustomerLocation()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section th:if="${customer}">
+            <h5>Customer Details</h5>
+
+            <table cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td>id</td>
+                    <td th:text="${customer.getId()}"></td>
+                </tr>
+                <tr>
+                    <td>first_name</td>
+                    <td th:text="${customer.getFirstName()}"></td>
+                </tr>
+                <tr>
+                    <td>last_name</td>
+                    <td th:text="${customer.getLastName()}"></td>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <td th:text="${customer.getEmail()}"></td>
+                </tr>
+                <tr>
+                    <td>company</td>
+                    <td th:text="${customer.getCompany()}"></td>
+                </tr>
+                <tr>
+                    <td>website</td>
+                    <td th:text="${customer.getWebsite()}"></td>
+                </tr>
+                <tr>
+                    <td>phone</td>
+                    <td th:text="${customer.getPhone()}"></td>
+                </tr>
+                <tr>
+                    <td>fax</td>
+                    <td th:text="${customer.getFax()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <p class="center small">Integrate with the Braintree SDK for a secure and seamless checkout</p>
+        </section>
+
+        <section>
+            <a class="button secondary full" href="https://developers.braintreepayments.com/guides/drop-in"
+               target="_blank">
+                <span>See the Docs</span>
+            </a>
+        </section>
+    </article>
+</aside>
+</body>
+</html>
